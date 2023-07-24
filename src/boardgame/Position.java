@@ -5,9 +5,9 @@ public class Position { //posição
 	private int row;//linha
 	private int column;//coluna
 	
-	public Position(int _row,int _column) {
-		this.row = _row;
-		this.column = _column;
+	public Position(int row,int column) {
+		this.row = row;
+		this.column = column;
 	}
 
 	public int getRow() {
