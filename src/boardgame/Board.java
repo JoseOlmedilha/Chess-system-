@@ -46,6 +46,19 @@ public class Board { //tabuleiro
 		piece.position = position; //passando pra peça o lugar que ela está
 	}
 	
+	public Piece removePiece(Position position) {//remover peça
+		if(!positionExists(position)) {//se a posição não existe 
+			throw new BoardException("Posição não existe no tabuleiro");
+		}
+		if(piece(position) == null) {// não tem peça na posição
+			return null;
+		}
+		Piece aux = piece(position); //salvar a peça da posição na variavel auxiliar 
+		aux.position = null;
+		pieces[position.getRow()][position.getColumn()] = null;
+		return aux; //retorna a peça que foi retirada 
+	}
+	
 	private boolean positionExists(int row, int column) { // verificar se existe a posição pela linha e coluna 
 		return row >= 0 && row < rows && column >= 0 && column < columns;
 	}
