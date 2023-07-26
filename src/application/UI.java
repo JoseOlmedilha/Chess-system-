@@ -49,20 +49,34 @@ public class UI {
 	}
 	
 	
-	public static void printBoard(ChessPiece[][] pieces) {
+	public static void printBoard(ChessPiece[][] pieces) {//imprimir o tabuleiro
 		for(int i=0; i<pieces.length; i++) {
 			System.out.print((8 - i) + " ");
 			for(int j=0; j<pieces.length; j++) {
-				printPiece(pieces[i][j]) ;
+				printPiece(pieces[i][j], false) ;
 			}
 			System.out.println();
 		}
 		System.out.println("  a b c d e f g h");
 	}
 	
-	private static void printPiece(ChessPiece piece) {//imprimir uma peça
+	public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {//imprimir o tabuleiro com os possíveis movimentos
+		for(int i=0; i<pieces.length; i++) {
+			System.out.print((8 - i) + " ");
+			for(int j=0; j<pieces.length; j++) {
+				printPiece(pieces[i][j], possibleMoves[i][j]) ;
+			}
+			System.out.println();
+		}
+		System.out.println("  a b c d e f g h");
+	}
+	
+	private static void printPiece(ChessPiece piece, boolean background) {//imprimir uma peça
+		if(background) {
+			System.out.print(ANSI_BLUE_BACKGROUND);
+		}
 		if(piece == null) {//se for igual a null é pq não tinha peça na coordenada
-			System.out.print("-");
+			System.out.print("-" + ANSI_RESET);
 		}
 		else {//se tiver peça vai imprimir a peça
 			if(piece.getColor() == Color.WHITE) {
