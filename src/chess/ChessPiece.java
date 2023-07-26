@@ -3,7 +3,7 @@ package chess;
 import boardgame.Board;
 import boardgame.Piece;
 
-public class ChessPiece extends Piece{
+public abstract class ChessPiece extends Piece{
 
 	private Color color; //Uma peça de xadrez tem todas a caracteristicas de uma peça normal, só que agora ela vai ter que ter uma cor
 
