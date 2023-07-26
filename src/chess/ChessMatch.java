@@ -8,13 +8,25 @@ import chess.pieces.Rook;
 
 public class ChessMatch {//Partida de Xadrez
 
+	private int turn;//turno
+	private Color currentPlayer;//player atual
 	private Board board;
 	
 	public ChessMatch() {
 		board = new Board(8, 8);//Quando eu começar a partida ele monta um tabuleiro 8,8
+		turn = 1; //turno comela com 1 
+		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
 
+	public int getTurn() {
+		return turn;
+	}
+	
+	public Color getCurrentPlayer() {
+		return currentPlayer;
+	}
+	
 	//colocar peça com a posição do xadrez
 	public ChessPiece[][] getPieces(){// Retornar a matriz com as peças de xadrez
 		ChessPiece[][] mat = new ChessPiece[board.getRows()][board.getColumns()]; //Uma matriz auxiliar de peças de xadrez
@@ -41,6 +53,7 @@ public class ChessMatch {//Partida de Xadrez
 		validateSourcePosition(source); // validar a posição de origem
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target); // mover a peça da posição de origem para a de destino
+		nextTurn();
 		return (ChessPiece)capturedPiece;
 	}
 	
@@ -56,6 +69,9 @@ public class ChessMatch {//Partida de Xadrez
 		if(!board.thereIsAPiece(position)) {//se não existir uam peça nessa posição
 			throw new ChessException("Não existe peça na posição de origem");
 		}
+		if(currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
+			throw new ChessException("A peça escolhida não é sua");
+		}
 		if(!board.piece(position).isThereAnyPossibleMove()) {//se não tiver nenhum movimento possivel
 			throw new ChessException("Não existe movimentos possíveis para peça escolhida");
 		}
@@ -65,6 +81,11 @@ public class ChessMatch {//Partida de Xadrez
 		if(!board.piece(source).possibleMove(target)) {//se pra peça de origem a posição de destino não é um movimento possível 
 			throw new ChessException("A peça escolhida não pode se mover para a posição de destino");
 		}
+	}
+	
+	private void nextTurn() {//Proximo turno
+		turn++;
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {//para instanciar a peça com as coordenadas do xadrez 
