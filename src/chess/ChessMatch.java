@@ -31,6 +31,7 @@ public class ChessMatch {//Partida de Xadrez
 		Position source = sourcePosition.toPosition();//transformando em posição de matriz (origem)
 		Position target = targetPosition.toPosition();//transformando em posição de matriz (destino)
 		validateSourcePosition(source); // validar a posição de origem
+		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target); // mover a peça da posição de origem para a de destino
 		return (ChessPiece)capturedPiece;
 	}
@@ -49,6 +50,12 @@ public class ChessMatch {//Partida de Xadrez
 		}
 		if(!board.piece(position).isThereAnyPossibleMove()) {//se não tiver nenhum movimento possivel
 			throw new ChessException("Não existe movimentos possíveis para peça escolhida");
+		}
+	}
+	
+	private void validateTargetPosition(Position source, Position target) {
+		if(!board.piece(source).possibleMove(target)) {//se pra peça de origem a posição de destino não é um movimento possível 
+			throw new ChessException("A peça escolhida não pode se mover para a posição de destino");
 		}
 	}
 	
