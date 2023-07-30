@@ -58,16 +58,16 @@ public class UI {
 		printCapturedPieces(captured);
 		System.out.println();
 		System.out.println("Turno: " + chessMatch.getTurn());
-		String s = (chessMatch.getCurrentPlayer() == Color.WHITE) ? "branca" : "preta";
+		
 		if(!chessMatch.getCheckMate()) {
-			System.out.println("Esperando o jogador da cor " + s ) ;
+			System.out.println("Esperando o jogador da cor " + chessMatch.getCurrentPlayer() ) ;
 			if(chessMatch.getCheck()) {//se a partida estiver em check
 				System.out.println("----------CHECK!----------");
 			}
 		}
 		else {
 			System.out.println("----------CHECKMATE!----------");
-			System.out.println("Vitória: " + s );
+			System.out.println("Vitória: " + chessMatch.getCurrentPlayer() );
 		}
 	
 	}

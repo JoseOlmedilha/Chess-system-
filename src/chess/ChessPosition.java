@@ -29,7 +29,7 @@ public class ChessPosition {//posição de xadrez
 		return new Position(8 - row, column - 'a') ;
 	}
 	
-	protected static ChessPosition formPosition(Position position) {//transformar a posição de matriz em posição de xadrez
+	protected static ChessPosition fromPosition(Position position) {//transformar a posição de matriz em posição de xadrez
 		return new ChessPosition((char)('a' + position.getColumn()), 8 - position.getRow());
 	}
 	

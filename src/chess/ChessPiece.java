@@ -18,7 +18,7 @@ public abstract class ChessPiece extends Piece{
 	}
 	
 	public ChessPosition getChessPosition() {//converte a posicão de matriz em posição de xadrez
-		return ChessPosition.formPosition(position); 
+		return ChessPosition.fromPosition(position); 
 	}
 	
 	protected boolean isThereOpponentPiece(Position position) {//verifica se a peça é um oponente
