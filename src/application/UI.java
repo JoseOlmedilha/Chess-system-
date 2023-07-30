@@ -58,7 +58,13 @@ public class UI {
 		printCapturedPieces(captured);
 		System.out.println();
 		System.out.println("Turno: " + chessMatch.getTurn());
-		System.out.println("Esperando o jogador da cor " + chessMatch.getCurrentPlayer());
+		String s = (chessMatch.getCurrentPlayer() == Color.WHITE) ? "Branco" : "Preto";
+		System.out.println("Esperando o jogador da cor " + s ) ;
+		if(chessMatch.getCheck()) {//se a partida estiver em check
+			System.out.println("----------CHECK!----------");
+		}
+	
+	
 	}
 	
 	public static void printBoard(ChessPiece[][] pieces) {//imprimir o tabuleiro

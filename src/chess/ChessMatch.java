@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -14,6 +15,7 @@ public class ChessMatch {//Partida de Xadrez
 	private int turn;//turno
 	private Color currentPlayer;//player atual
 	private Board board;
+	private boolean check;
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();//lista de peças no tabuleiro
 	private List<Piece> CapturedPieces = new ArrayList<>();  //lista de peças capturadas
@@ -32,6 +34,10 @@ public class ChessMatch {//Partida de Xadrez
 	
 	public Color getCurrentPlayer() {
 		return currentPlayer;
+	}
+	
+	public boolean getCheck() {
+		return check;
 	}
 	
 	//colocar peça com a posição do xadrez
@@ -60,6 +66,14 @@ public class ChessMatch {//Partida de Xadrez
 		validateSourcePosition(source); // validar a posição de origem
 		validateTargetPosition(source, target);
 		Piece capturedPiece = makeMove(source, target); // mover a peça da posição de origem para a de destino
+		
+		if(testCheck(currentPlayer)) {//se o jogador atual se colocou em check
+			undoMove(source, target, capturedPiece);//desfazendo o movimento
+			throw new ChessException("Você não pode se colocar em check");
+		}
+		//verificando se o oponente está em check
+		check = (testCheck(opponent(currentPlayer))) ? true : false;
+		
 		nextTurn();
 		return (ChessPiece)capturedPiece;
 	}
@@ -75,6 +89,17 @@ public class ChessMatch {//Partida de Xadrez
 		}
 		
 		return capturedPiece; //retorna a peça capturada 
+	}
+	
+	private void undoMove(Position source, Position target, Piece capturadPiece) {//desfazer um movimento(ex: se o rei se colocar em check)
+		Piece p = board.removePiece(target); //pegar a peça que foi colocada no destino
+		board.placePiece(p, target); // devolver para a posição de origem
+		
+		if(capturadPiece != null) {// se ele capturou uma peça vamos ter que devolver para a posição wue ela estava
+			board.placePiece(capturadPiece, target);//devolvendo a peça para a posição que ela eá no caso destino
+			CapturedPieces.remove(capturadPiece);//tirando a peça da lista de capturadas
+			piecesOnTheBoard.add(capturadPiece);//devolvendo a peça para a lista de peças no tabulerio
+		}
 	}
 	
 	private void validateSourcePosition(Position position) {
@@ -104,7 +129,33 @@ public class ChessMatch {//Partida de Xadrez
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
 		piecesOnTheBoard.add(piece); //sempre que uma peça for instanciada ela tem que ser adicionado na losta de peças do tabuleiro
 	}
+	
+	private Color opponent(Color color) {
+		return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+	
+	private ChessPiece king(Color color) {//varer a lista para achar o Rei
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		for(Piece p : list) {
+			if(p instanceof King) {
+				return (ChessPiece) p;
+			}
+		}
+		throw new IllegalStateException("Não existe o Rei da cor " + color + " no tabuleiro");//nunca vai ocorrer se ocorrer ta com problema na logica toda
+	}
 
+	private boolean testCheck(Color color) {//testar se o rei da cor está em check
+		Position kingPosition = king(color).getChessPosition().toPosition();
+		List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList()); // lista com as peças oponentes 
+		for (Piece p : opponentPieces) {
+			boolean[][] mat = p.possibleMoves();//matriz de possiveis moviemntos da peça (acaomo está dentro do for ele vai mudando as peças, então cada laço do for a matriz é outra)
+			if(mat[kingPosition.getRow()][kingPosition.getColumn()]) {//se a posição do rei na matrix estiver em check
+				return true;//o rei está em check
+			}
+		}
+		return false;
+	}
+	
 	private void initialSetup() {//iniciar a partida de xadrez colocando as peças no tabuleiro
 		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
         placeNewPiece('c', 2, new Rook(board, Color.WHITE));
