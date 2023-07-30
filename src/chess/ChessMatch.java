@@ -16,6 +16,7 @@ public class ChessMatch {//Partida de Xadrez
 	private Color currentPlayer;//player atual
 	private Board board;
 	private boolean check;
+	private boolean checkMate; 
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();//lista de peças no tabuleiro
 	private List<Piece> CapturedPieces = new ArrayList<>();  //lista de peças capturadas
@@ -38,6 +39,10 @@ public class ChessMatch {//Partida de Xadrez
 	
 	public boolean getCheck() {
 		return check;
+	}
+	
+	public boolean getCheckMate() {
+		return checkMate;
 	}
 	
 	//colocar peça com a posição do xadrez
@@ -74,7 +79,12 @@ public class ChessMatch {//Partida de Xadrez
 		//verificando se o oponente está em check
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
 		
-		nextTurn();
+		if(testCheckMate(opponent(currentPlayer))) {//se o oponente ficou em checkmate acabou o jogo
+			checkMate = true;
+		}
+		else {
+			nextTurn();
+		}
 		return (ChessPiece)capturedPiece;
 	}
 	
@@ -156,20 +166,41 @@ public class ChessMatch {//Partida de Xadrez
 		return false;
 	}
 	
+	private boolean testCheckMate(Color color) {//se o rei está em check mate
+		if(!testCheck(color)) {//se ele não estiver em check não vai está em check mate
+			return false;
+		}
+		List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		for (Piece p : list) {
+			boolean[][] mat = p.possibleMoves();
+			for(int i=0; i<board.getRows(); i++) {
+				for(int j=0; j<board.getColumns(); j++) {
+					if(mat[i][j]) {//se o moviemnto for possivel (true na matriz) ele vai entra na condiçãoe verificar se tira o rei do check
+						Position source = ((ChessPiece)p).getChessPosition().toPosition();//pegando a posição da peça
+						Position target = new Position(i, j);//nova posição de destino da peça 
+						Piece capturedPiece = makeMove(source, target); //movendo a peça da origem para o destino e capturando alguma peça
+						boolean testCheck = testCheck(color);//testando se a rei da cor ainda está em check
+						undoMove(source, target, capturedPiece);// desfazendo o movimento do teste
+						if(!testCheck) {//se ele não etá em check no teste significa que o movimento testado tirou ele do check
+							return false;
+						}
+						
+					}
+				}
+				
+			}
+			
+		}
+		return true;
+	}
+	
 	private void initialSetup() {//iniciar a partida de xadrez colocando as peças no tabuleiro
-		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('c', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 2, new Rook(board, Color.WHITE));
-        placeNewPiece('e', 1, new Rook(board, Color.WHITE));
-        placeNewPiece('d', 1, new King(board, Color.WHITE));
+		placeNewPiece('h', 7, new Rook(board, Color.WHITE));
+        placeNewPiece('d', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE));
 
-        placeNewPiece('c', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('c', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 7, new Rook(board, Color.BLACK));
-        placeNewPiece('e', 8, new Rook(board, Color.BLACK));
-        placeNewPiece('d', 8, new King(board, Color.BLACK));
+        placeNewPiece('b', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('a', 8, new King(board, Color.BLACK));
 	}
 
 }
