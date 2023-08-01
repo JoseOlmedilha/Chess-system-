@@ -100,6 +100,30 @@ public class ChessMatch {//partida de xadrez
 			capturedPieces.add(capturedPiece);
 		}
 		
+		//pecialmove casting kingside rook
+		
+		//se p foi uma intancia de Rei E a posição de destino da coluna for a posição de origem mais 2 é um roque pequeno
+		if(p instanceof King && target.getColumn() == source.getColumn() +2) {
+			Position sourceT = new Position(source.getRow(), source.getColumn() + 3);//mesma kinha do rei e a coluna mais 3
+			Position targetT = new Position(source.getRow(), source.getColumn() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(sourceT);//removendo a peça
+			board.placePiece(rook, targetT);//colocando a peça na nova posição
+			rook.increaseMoveCount();//aumentando o movimento
+			
+		}
+		
+		//pecialmove casting queenside rook
+		
+		//se p foi uma intancia de Rei E a posição de destino da coluna for a posição de origem mais 2 é um roque pequeno
+		if(p instanceof King && target.getColumn() == source.getColumn() -2) {
+			Position sourceT = new Position(source.getRow(), source.getColumn() - 4);//mesma kinha do rei e a coluna mais 3
+			Position targetT = new Position(source.getRow(), source.getColumn() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(sourceT);//removendo a peça
+			board.placePiece(rook, targetT);//colocando a peça na nova posição
+			rook.increaseMoveCount();//aumentando o movimento
+					
+		}
+		
 		return capturedPiece;
 	}
 	
@@ -113,6 +137,31 @@ public class ChessMatch {//partida de xadrez
 			capturedPieces.remove(capturedPiece);//tirando a peça da lista de capturadas
 			piecesOnTheBoard.add(capturedPiece);//devolvendo a peça para a lista de peças no tabulerio
 		}
+	
+		//pecialmove casting kingside rook
+		
+		//se p foi uma intancia de Rei E a posição de destino da coluna for a posição de origem mais 2 é um roque pequeno
+		if(p instanceof King && target.getColumn() == source.getColumn() +2) {
+			Position sourceT = new Position(source.getRow(), source.getColumn() + 3);//mesma kinha do rei e a coluna mais 3
+			Position targetT = new Position(source.getRow(), source.getColumn() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(targetT);//removendo a peça do destino
+			board.placePiece(rook, sourceT);//colocando a peça na antiga posição
+			rook.decreaseMoveCount();//diminuindo o movimento
+					
+		}
+				
+		//pecialmove casting queenside rook
+				
+		//se p foi uma intancia de Rei E a posição de destino da coluna for a posição de origem mais 2 é um roque pequeno
+		if(p instanceof King && target.getColumn() == source.getColumn() -2) {
+			Position sourceT = new Position(source.getRow(), source.getColumn() - 4);//mesma kinha do rei e a coluna mais 3
+			Position targetT = new Position(source.getRow(), source.getColumn() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(targetT);//removendo a peça do destino
+			board.placePiece(rook, sourceT);//colocando a peça na antiga posição
+			rook.decreaseMoveCount();//diminuindo o movimento
+							
+		}
+		
 	}
 	
 	private void validateSourcePosition(Position position) {
@@ -199,7 +248,7 @@ public class ChessMatch {//partida de xadrez
 		placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 		placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
 		placeNewPiece('d', 1, new Queen(board, Color.WHITE));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
         placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
         placeNewPiece('g', 1, new Knight(board, Color.WHITE));
         placeNewPiece('h', 1, new Rook(board, Color.WHITE));
@@ -216,7 +265,7 @@ public class ChessMatch {//partida de xadrez
         placeNewPiece('b', 8, new Knight(board, Color.BLACK));
         placeNewPiece('c', 8, new Bishop(board, Color.BLACK));
         placeNewPiece('d', 8, new Queen(board, Color.BLACK));
-        placeNewPiece('e', 8, new King(board, Color.BLACK));
+        placeNewPiece('e', 8, new King(board, Color.BLACK, this));
         placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
         placeNewPiece('g', 8, new Knight(board, Color.BLACK));
         placeNewPiece('h', 8, new Rook(board, Color.BLACK));
