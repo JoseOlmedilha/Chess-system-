@@ -22,7 +22,7 @@ public class ChessMatch {//partida de xadrez
 	private boolean check;
 	private boolean checkMate;
 	private ChessPiece enPassantVunerable;// checar se há possibilidade de fazer o en passant
-	
+	private ChessPiece promoted;//se o pião chegar ao outro lado da tabulerio ele pode virar outra peça
 	
 	private List<Piece> piecesOnTheBoard = new ArrayList<>();//lista de peças no tabuleiro
 	private List<Piece> capturedPieces = new ArrayList<>();//lista de peças capturadas
@@ -52,6 +52,10 @@ public class ChessMatch {//partida de xadrez
 	
 	public ChessPiece getEnPassantVulnerable() {
 		return enPassantVunerable;
+	}
+	
+	public ChessPiece getPromoted() {
+		return promoted;
 	}
 	
 	public ChessPiece[][] getPieces() {//colocar a peça na posição de xadrez
@@ -84,6 +88,20 @@ public class ChessMatch {//partida de xadrez
 		
 		ChessPiece movedPiece = (ChessPiece)board.piece(target);//pegar a peça que se moveu para a posição de destino (en passant)
 		
+		//specialmove promotion(se o pião chegar no final troca pra outra peça)
+		promoted = null;
+		if(movedPiece instanceof Pawn) {//se a peça movida for ums instancia de pião
+			if((movedPiece.getColor() == Color.WHITE && target.getRow() == 0)  || (movedPiece.getColor() == Color.BLACK && target.getRow() == 7)){
+				//se a cor da peça for == a branco(preto) e a linha que ela está é a 0(7) significa que ela chegou no final
+				promoted = (ChessPiece)board.piece(target);	//pega a peça do destino	
+				promoted = replacePromotedPiece("Q");
+				
+				
+			}
+		}
+		
+		
+		
 		
 		//verificando se o oponente está em check
 		check = (testCheck(opponent(currentPlayer))) ? true : false;
@@ -106,6 +124,32 @@ public class ChessMatch {//partida de xadrez
 		
 		return (ChessPiece)capturedPiece;
 	}
+	
+	public ChessPiece replacePromotedPiece(String type) {//trocar o pião pela peça
+		if(promoted == null) {
+			throw new IllegalStateException("Não há peça para ser promovida");
+		}
+		if(!type.equals("B") && !type.equals("C") && !type.equals("T") && !type.equals("Q")) {
+			return promoted;
+		}
+		Position pos = promoted.getChessPosition().toPosition();		
+		Piece p = board.removePiece(pos);//remover a peça e guardar na variavel
+		piecesOnTheBoard.remove(p);
+		
+		ChessPiece newPiece = newPiece(type, promoted.getColor());
+		board.placePiece(newPiece, pos);
+		piecesOnTheBoard.add(newPiece);
+		
+		return newPiece;
+	}
+	
+	private ChessPiece newPiece(String type, Color color) {//metodo auxiliar de replacePromoted
+		if(type.equals("B")) return new Bishop(board, color);
+		if(type.equals("C")) return new Knight(board, color);
+		if(type.equals("Q")) return new Queen(board, color);
+		return new Rook(board, color);
+	}
+	
 	
 	private Piece makeMove(Position source, Position target) {//fazer um movimento 
 		ChessPiece p = (ChessPiece) board.removePiece(source);//retirar a peça da posição de origem
